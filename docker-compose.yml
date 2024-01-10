@@ -11,8 +11,6 @@ services:
             - db:/var/lib/postgresql/data
     api:
         image: herjuus/backend
-        env_file:
-            - ./.env
         environment:
             DATABASE_URL: "postgres://postgres:${POSTGRES_PASSWORD}@db:5432"
             JWT_SECRET: ${JWT_SECRET}
