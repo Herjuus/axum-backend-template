@@ -16,5 +16,5 @@ pub fn auth_routes() -> Router {
         .route_layer(from_fn(jwt_middleware))
         .route("/register", post(register::register_user))
         .route("/login", post(login::login_user));
-    (routes)
+    routes
 }

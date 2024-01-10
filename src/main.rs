@@ -1,15 +1,10 @@
 mod auth;
-mod lib;
 pub mod error;
 
-use std::string::ToString;
-use axum::{Router, routing::get, routing::post};
+use axum::{Router};
 use dotenv::dotenv;
 use std::error::Error;
-use axum::body::HttpBody;
-use axum::middleware::from_fn;
 use sqlx::PgPool;
-use crate::auth::middleware::jwt_middleware;
 use crate::auth::routes::auth_routes;
 
 pub type Tx = axum_sqlx_tx::Tx<sqlx::Postgres>;

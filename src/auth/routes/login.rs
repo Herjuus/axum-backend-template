@@ -1,8 +1,6 @@
 use axum::http::StatusCode;
-use axum::{debug_handler, Json};
-use axum::body::HttpBody;
+use axum::{Json};
 use serde::{Deserialize, Serialize};
-use crate::error;
 use crate::Tx;
 use pwhash::bcrypt;
 use crate::auth::jwt::generate_user_token;
@@ -11,7 +9,7 @@ use crate::error::ApiError;
 pub async fn login_user(mut tx: Tx, Json(payload): Json<Request>) -> Result<(StatusCode, Json<Return>), ApiError> {
     let user = sqlx::query_as!(User, "SELECT * FROM users WHERE email = $1", payload.email)
         .fetch_one(&mut tx)
-        .await.map_err(|e| ApiError { status_code: StatusCode::NOT_FOUND, message: "Incorrect email.".to_string() })?;
+        .await.map_err(|_e| ApiError { status_code: StatusCode::NOT_FOUND, message: "Incorrect email.".to_string() })?;
 
     let correct_password = bcrypt::verify(payload.password, user.hashed_password.as_str());
 
@@ -22,13 +20,14 @@ pub async fn login_user(mut tx: Tx, Json(payload): Json<Request>) -> Result<(Sta
     let token = generate_user_token(user.id).unwrap();
 
     let return_object = Return {
-        Token: token,
-        Message: "Logged in.".to_string(),
+        token: token,
+        message: "Logged in.".to_string(),
     };
 
     Ok((StatusCode::OK, Json(return_object)))
 }
 
+#[allow(dead_code)]
 struct User {
     id: i32,
     username: String,
@@ -44,6 +43,6 @@ pub struct Request {
 
 #[derive(Serialize)]
 pub struct Return {
-    Token: String,
-    Message: String,
+    token: String,
+    message: String,
 }
