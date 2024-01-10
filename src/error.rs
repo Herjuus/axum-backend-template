@@ -12,6 +12,6 @@ pub struct ApiError {
 impl IntoResponse for ApiError {
     fn into_response(self) -> axum::response::Response {
         let status_code = self.status_code;
-        (status_code,[(header::CONTENT_TYPE,"application/json")],Json(json!({ "StatusCode": self.status_code.as_u16(), "Message": self.message }))).into_response()
+        (status_code,[(header::CONTENT_TYPE,"application/json")],Json(json!({ "statuscode": self.status_code.as_u16(), "message": self.message }))).into_response()
     }
 }
